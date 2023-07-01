@@ -1,6 +1,5 @@
 from dotenv import dotenv_values
 import streamlit as st
-from streamlit_chat import message
 import time
 import requests
 import json
@@ -14,7 +13,8 @@ input_container = st.container()
 response_container = st.container()
 # se inicializa historial del chat
 if "messages" not in st.session_state:
-    st.session_state.messages = []
+    st.session_state.messages = [{"role": "assistant", "content": "Hola! Bienvenido al chat de Entel. ¿En que te "
+                                                                  "puedo ayudar?"}]
 
 # se muestran mensajes del historial
 for message in st.session_state.messages:
@@ -34,7 +34,7 @@ if prompt := st.chat_input("¿En que te puedo ayudar?"):
         message_placeholder = st.empty()
         full_response = ""
 
-        #Judini
+        # Judini
         url = 'https://playground.judini.ai/api/v1/agent/'+agent_id
         headers = {"Content-Type": "application/json; charset=utf-8", "Authorization": "Bearer "+api_key}
         data = {
