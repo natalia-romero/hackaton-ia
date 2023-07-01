@@ -1,5 +1,7 @@
 from dotenv import dotenv_values
 import streamlit as st
+from streamlit_chat import message
+from streamlit_extras.colored_header import colored_header
 import time
 import requests
 import json
@@ -9,6 +11,9 @@ api_key = env_variables['JUDINI_API_KEY']
 agent_id = env_variables['AGENT_ID']
 
 st.title('Chat Entel 📱')
+input_container = st.container()
+colored_header(label='', description='', color_name='blue-30')
+response_container = st.container()
 # se inicializa historial del chat
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -18,16 +23,16 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# input del usuario
+# input del user
 if prompt := st.chat_input("¿En que te puedo ayudar?"):
-    # se agrega input del usuario al historial
-    st.session_state.messages.append({"role": "usuario", "content": prompt})
-    # se muestra el input del usuario
-    with st.chat_message("usuario"):
+    # se agrega input del user al historial
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    # se muestra el input del user
+    with st.chat_message("user"):
         st.markdown(prompt)
 
-    # se muestra el input del ejecutivo
-    with st.chat_message("ejecutivo"):
+    # se muestra el input del assistant
+    with st.chat_message("assistant"):
         message_placeholder = st.empty()
         full_response = ""
 
@@ -37,7 +42,7 @@ if prompt := st.chat_input("¿En que te puedo ayudar?"):
         data = {
             "messages": [
                 {
-                    "role": "usuario",
+                    "role": "user",
                     "content": prompt
                 }
             ]
@@ -64,4 +69,4 @@ if prompt := st.chat_input("¿En que te puedo ayudar?"):
                             except json.JSONDecodeError:
                                 print(f'Error al decodificar el objeto JSON en la línea: {line}')
         message_placeholder.markdown(full_response)
-    st.session_state.messages.append({"role": "ejecutivo", "content": full_response})
+    st.session_state.messages.append({"role": "assistant", "content": full_response})
