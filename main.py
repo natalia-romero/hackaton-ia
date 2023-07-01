@@ -3,38 +3,31 @@ import streamlit as st
 import time
 import requests
 import json
-from judini.agent import Agent
 
-# se genera conexión a judini
 env_variables = dotenv_values('.env')
-
 api_key = env_variables['JUDINI_API_KEY']
 agent_id = env_variables['AGENT_ID']
 
-agent = Agent(api_key, agent_id)
-
-# se genera front del chat
-
 st.title('Chat Entel 📱')
-# Initialize chat history
+# se inicializa historial del chat
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Display chat messages from history on app rerun
+# se muestran mensajes del historial
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# Accept user input
+# input del usuario
 if prompt := st.chat_input("¿En que te puedo ayudar?"):
-    # Add user message to chat history
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    # Display user message in chat message container
-    with st.chat_message("user"):
+    # se agrega input del usuario al historial
+    st.session_state.messages.append({"role": "usuario", "content": prompt})
+    # se muestra el input del usuario
+    with st.chat_message("usuario"):
         st.markdown(prompt)
 
-    # Display assistant response in chat message container
-    with st.chat_message("assistant"):
+    # se muestra el input del ejecutivo
+    with st.chat_message("ejecutivo"):
         message_placeholder = st.empty()
         full_response = ""
 
@@ -44,7 +37,7 @@ if prompt := st.chat_input("¿En que te puedo ayudar?"):
         data = {
             "messages": [
                 {
-                    "role": "user",
+                    "role": "usuario",
                     "content": prompt
                 }
             ]
@@ -66,9 +59,9 @@ if prompt := st.chat_input("¿En que te puedo ayudar?"):
                                 result = json_object['data']
                                 full_response += result
                                 time.sleep(0.05)
-                                # Add a blinking cursor to simulate typing
+                                # Se agrega un cursor parpadeante para simular que está escribiendo
                                 message_placeholder.markdown(full_response + "▌")
                             except json.JSONDecodeError:
                                 print(f'Error al decodificar el objeto JSON en la línea: {line}')
         message_placeholder.markdown(full_response)
-    st.session_state.messages.append({"role": "assistant", "content": full_response})
+    st.session_state.messages.append({"role": "ejecutivo", "content": full_response})
