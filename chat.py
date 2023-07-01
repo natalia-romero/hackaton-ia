@@ -7,7 +7,7 @@ from langchain.chains import ConversationalRetrievalChain
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.document_loaders import TextLoader
 from langchain.document_loaders import DirectoryLoader
-from langchain.indexes import VectorstoreIndexCreator
+from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import FAISS
 from langchain.prompts.chat import (
     ChatPromptTemplate
@@ -20,19 +20,13 @@ f = open('prompt.txt', 'r')
 template = f.read()
 f.close()
 
-chat = ChatOpenAI(
-    openai_api_key=openai_key, temperature=0.2)
+chat = ChatOpenAI(openai_api_key=openai_key, temperature=0.2, model='gpt-3.5-turbo',max_tokens=10)
 prompt_template = ChatPromptTemplate.from_template(template)
-# files = ['plan.csv', 'telefonos.csv']
-# documents = []
-# for file in files:
-#     loader = TextLoader(file)
-#     documents.extend(loader.load())
-# loader =  TextLoader(documents)
-# data = loader.load()
-# loader = TextLoader('csv/telefonos.csv')
+#loader = TextLoader('plan.csv')
 loader = DirectoryLoader('csv/', glob="**/*.csv", loader_cls=TextLoader)
 docs = loader.load()
+text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+docs = text_splitter.split_documents(docs)
 embeddings = OpenAIEmbeddings(openai_api_key=openai_key)
 vectors = FAISS.from_documents(docs, embeddings)
 chain = ConversationalRetrievalChain.from_llm(llm = chat,retriever=vectors.as_retriever())
