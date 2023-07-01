@@ -1,7 +1,6 @@
 from dotenv import dotenv_values
 import streamlit as st
 from streamlit_chat import message
-from streamlit_extras.colored_header import colored_header
 import time
 import requests
 import json
@@ -12,7 +11,6 @@ agent_id = env_variables['AGENT_ID']
 
 st.title('Chat Entel 📱')
 input_container = st.container()
-colored_header(label='', description='', color_name='blue-30')
 response_container = st.container()
 # se inicializa historial del chat
 if "messages" not in st.session_state:

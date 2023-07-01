@@ -3,8 +3,8 @@ import csv
 from bs4 import BeautifulSoup
 
 # Archivo destino
-archivo_csv = "../csv/telefonos2.csv"
-headers = ["marca", "nombre", "precio", "almacenamiento", "pantalla", "camara", "selfie"]
+archivo_destino = "../txt/telefonos.txt"
+texto = 'El inventario consiste de:\n'
 
 responses = []
 start: int = 0
@@ -12,7 +12,7 @@ end: int = 24
 
 # Obtener datos desde el dataset
 print("Obteniendo datos desde el portal entel...")
-while end < 168:
+while end < 96:
     # Request HTTP
     url = f'https://miportal.entel.cl/personas//catalogo/celulares?No=' \
           f'{start}&Nrpp={end}&contentPath=%2Fpages%2Fstorechilepp' \
@@ -26,34 +26,23 @@ while end < 168:
 
 print("Datos obtenidos, generando CSV...")
 
-telefonos = []
 # Obtener datos de los telefonos
 for response in responses:
     for objeto in response:
         atributos = objeto["attributes"]
-        marca = atributos["brand"]
-        nombre = atributos["displayName"]
-        precio = atributos["price.formatted"]
-        almacenamiento = atributos["internal"]
-        pantalla = atributos["product.screenSize"]
-        camara = atributos["primary"]
-        selfie = atributos["secondary"]
+        marca = atributos["brand"][0]
+        nombre = atributos["displayName"][0]
+        precio = atributos["price.formatted"][0]
+        almacenamiento = atributos["internal"][0]
+        pantalla = atributos["product.screenSize"][0]
+        camara = atributos["primary"][0]
 
-        telefono = {
-            "marca": marca,
-            "nombre": nombre,
-            "precio": precio,
-            "almacenamiento": almacenamiento,
-            "pantalla": pantalla,
-            "camara": camara,
-            "selfie": selfie
-        }
-        telefonos.append(telefono)
+        texto += f'Telefono {nombre}, Marca {marca}, Precio {precio} CLP, Almacenamiento {almacenamiento}, ' \
+                 f'Pantalla de {pantalla} pulgadas, Camaras de {camara} megapixeles\n'
 
 # Escribir csv
-with open(archivo_csv, mode='w', newline='') as file:
-    writer = csv.DictWriter(file, fieldnames=headers)
-    writer.writeheader()
-    writer.writerows(telefonos)
+with open(archivo_destino, "w") as archivo:
+    # Escribir el texto en el archivo
+    archivo.write(texto)
 
-print("Archivo CSV generado exitosamente.")
+print("Archivo TXT generado exitosamente.")

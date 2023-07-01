@@ -3,7 +3,8 @@ import csv
 from bs4 import BeautifulSoup
 
 # Archivo destino
-archivo_csv = "../csv/planes.csv"
+archivo_destino = "../txt/telefonos.txt"
+texto = 'Los planes que poseemos son:\n'
 
 # Request HTTP
 url = "https://www.entel.cl/planes/oferta-portabilidad/"
