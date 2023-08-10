@@ -53,7 +53,7 @@ export default function Home() {
     }
 
     const question = query.trim();
-
+    var startDate = new Date();
     setMessageState((state) => ({
       ...state,
       messages: [
@@ -101,7 +101,9 @@ export default function Home() {
       console.log('messageState', messageState);
 
       setLoading(false);
-
+      var endDate   = new Date();
+      var seconds = (endDate.getTime() - startDate.getTime()) / 1000;
+      console.log(seconds)
       //scroll to bottom
       messageListRef.current?.scrollTo(0, messageListRef.current.scrollHeight);
     } catch (error) {
